@@ -1,66 +1,18 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-class Getnews {
-  String id;
-  String title;
-  String subtitle;
-  String description;
-  String image;
-  String nonbanner;
-  String author;
-  String post;
-  String category;
-  String createdat;
-  String updatedat;
-
-  Getnews(
-      {this.id,
-      this.title,
-      this.subtitle,
-      this.description,
-      this.image,
-      this.nonbanner,
-      this.author,
-      this.post,
-      this.category,
-      this.createdat,
-      this.updatedat});
-  factory Getnews.createPostResult(Map<String, dynamic> object) {
-    return Getnews(
-      id: object['id'],
-      title: object['title'],
-      subtitle: object['subtitle'],
-      description: object['description'],
-      image: object['image'],
-      nonbanner: object['nonbanner'],
-      author: object['author'],
-      post: object['post'],
-      category: object['category'],
-      createdat: object['created_at'],
-      updatedat: object['updated_at'],
-    );
-  }
-  static Future<Getnews> connectToAPI(
-      String accept, String authorization) async {
-    String apiURL = "https://snip-id.com/api/index";
-
-    var apiResult = await http.post(apiURL, headers: {
-      "accept": accept,
-      "Authorization": authorization,
-    });
-    var jsonObject = 
-  }
-}
-
-class News extends StatelessWidget {
+class News extends StatefulWidget {
   News({this.gambar, this.judul, this.menu, this.detailtext, this.date});
   final String judul;
   final String gambar;
   final String menu;
   final String detailtext;
   final String date;
+
+  @override
+  _NewsState createState() => _NewsState();
+}
+
+class _NewsState extends State<News> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -69,11 +21,11 @@ class News extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DetailBerita(
-                    detailtext: detailtext,
-                    title: judul,
-                    image: gambar,
-                    date: date,
-                    menu: menu,
+                    detailtext: widget.detailtext,
+                    title: widget.judul,
+                    image: widget.gambar,
+                    date: widget.date,
+                    menu: widget.menu,
                   )),
         );
       },
@@ -83,7 +35,7 @@ class News extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.5),
           image: DecorationImage(
-              image: NetworkImage(gambar),
+              image: NetworkImage(widget.gambar),
               fit: BoxFit.fill,
               colorFilter: new ColorFilter.mode(
                   Colors.grey.withOpacity(0.5), BlendMode.dstATop)),
@@ -106,7 +58,7 @@ class News extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        date,
+                        widget.date,
                         style: new TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey[100]),
@@ -125,7 +77,7 @@ class News extends StatelessWidget {
                     Container(
                       width: 315.0,
                       child: Text(
-                        judul,
+                        widget.judul,
                         overflow: TextOverflow.ellipsis,
                         style: new TextStyle(
                           fontWeight: FontWeight.bold,
@@ -146,7 +98,7 @@ class News extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        menu,
+                        widget.menu,
                         style: new TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey[100]),
@@ -163,7 +115,7 @@ class News extends StatelessWidget {
   }
 }
 
-class DetailBerita extends StatelessWidget {
+class DetailBerita extends StatefulWidget {
   DetailBerita({
     this.title,
     this.image,
@@ -176,6 +128,12 @@ class DetailBerita extends StatelessWidget {
   final String detailtext;
   final String menu;
   final String date;
+
+  @override
+  _DetailBeritaState createState() => _DetailBeritaState();
+}
+
+class _DetailBeritaState extends State<DetailBerita> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +155,7 @@ class DetailBerita extends StatelessWidget {
                     Border(bottom: BorderSide(color: Colors.black, width: 15)),
                 image: DecorationImage(
                   image: NetworkImage(
-                    image,
+                    widget.image,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -211,7 +169,7 @@ class DetailBerita extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          menu,
+                          widget.menu,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
@@ -231,7 +189,7 @@ class DetailBerita extends StatelessWidget {
                         Container(
                             constraints: BoxConstraints(maxWidth: 340),
                             child: Text(
-                              title,
+                              widget.title,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -249,7 +207,7 @@ class DetailBerita extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          date,
+                          widget.date,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
@@ -266,16 +224,55 @@ class DetailBerita extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
               child: RichText(
                 text: TextSpan(
-                    text: detailtext, style: TextStyle(color: Colors.black)),
+                    text: widget.detailtext,
+                    style: TextStyle(color: Colors.black)),
                 textAlign: TextAlign.justify,
               )),
+               Container(
+             margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(children: [
+            new Flexible(
+              child:Theme(
+          data: new ThemeData(
+            primaryColor: Colors.black,
+            primaryColorDark: Colors.red,
+          ),
+          child: new TextField(
+            decoration:new InputDecoration(
+      border: new OutlineInputBorder(
+        borderRadius: const BorderRadius.all(
+          const Radius.circular(25.0),
+        ),
+      ),
+                hintText: 'Comment',              
+        ),
+          ),
+          ),
+          ),
+          Container(
+            width: 10,
+          ),
+          Ink(
+          decoration: ShapeDecoration(
+            color: Colors.lightBlue,
+            shape: CircleBorder(),
+          ),
+          child: IconButton(
+            icon: Icon(Icons.send),
+            color: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+            ],
+            ),
+          ),
         ],
       )),
     );
   }
 }
 
-class WhatsTrending extends StatelessWidget {
+class WhatsTrending extends StatefulWidget {
   WhatsTrending(
       {this.menu, this.title, this.gambar, this.date, this.detailtext});
   final String menu;
@@ -283,6 +280,12 @@ class WhatsTrending extends StatelessWidget {
   final String gambar;
   final String date;
   final String detailtext;
+
+  @override
+  _WhatsTrendingState createState() => _WhatsTrendingState();
+}
+
+class _WhatsTrendingState extends State<WhatsTrending> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -291,11 +294,11 @@ class WhatsTrending extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DetailBerita(
-                    detailtext: detailtext,
-                    title: title,
-                    image: gambar,
-                    date: date,
-                    menu: menu,
+                    detailtext: widget.detailtext,
+                    title: widget.title,
+                    image: widget.gambar,
+                    date: widget.date,
+                    menu: widget.menu,
                   )),
         );
       },
@@ -318,7 +321,7 @@ class WhatsTrending extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                     image: NetworkImage(
-                      gambar,
+                      widget.gambar,
                     ),
                     fit: BoxFit.cover),
               ),
@@ -332,7 +335,7 @@ class WhatsTrending extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        menu,
+                        widget.menu,
                         style: TextStyle(
                             color: Colors.grey, fontWeight: FontWeight.bold),
                       ),
@@ -341,20 +344,23 @@ class WhatsTrending extends StatelessWidget {
                   Container(
                     height: 10.0,
                   ),
+                  Row(children: [
                   Container(
-                    child: Text(title,
+                    width: 300,
+                    child: 
+                      Text(widget.title,
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 15),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2),
+                         overflow: TextOverflow.ellipsis,),
                   ),
+                  ],),
                   Container(
                     height: 10.0,
                   ),
                   Container(
-                    child: Text(detailtext,
+                    child: Text(widget.detailtext,
                         style: TextStyle(
                           color: Colors.black,
                         ),
@@ -368,7 +374,7 @@ class WhatsTrending extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          date,
+                          widget.date,
                           style: TextStyle(
                               color: Colors.grey, fontWeight: FontWeight.bold),
                         ),

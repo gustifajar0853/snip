@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:snip/main.dart';
 import 'package:snip/Pages/Login_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 class SplashSreen extends StatefulWidget {
   @override
   _SplashSreenState createState() => _SplashSreenState();
@@ -33,15 +31,20 @@ class _SplashSreenState extends State<SplashSreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      color: Colors.black,
-      child: Center(
-        child: Text(
-          "SNIPBISA",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black,
+          child: Center(
+            child: Text(
+              "SNIPBISA",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+              ),
+            ),
           ),
         ),
       ),

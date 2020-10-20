@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:snip/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 class Loginpage extends StatefulWidget {
   @override
   _LoginpageState createState() => _LoginpageState();
@@ -21,10 +20,10 @@ class _LoginpageState extends State<Loginpage> {
       _kondisiPassword = !_kondisiPassword;
     });
   }
-  signIn(String name, pass) async {
+  signIn(String email, pass) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map data = {
-      'name': name,
+      'email': email,
       'password': pass
     };
     var jsonResponse = null;
@@ -36,6 +35,8 @@ class _LoginpageState extends State<Loginpage> {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse['token']);
+        sharedPreferences.setString("email", jsonResponse['user']['email']);
+        sharedPreferences.setString("name", jsonResponse['user']['name']);
         Navigator.push(context,
                     MaterialPageRoute(builder: (context) => Mainpage()));
       }

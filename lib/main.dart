@@ -6,7 +6,8 @@ import 'package:snip/Pages/Login_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snip/Pages/SplashSreen.dart';
 import 'package:snip/Pages/news.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +27,38 @@ class Mainpage extends StatefulWidget {
 }
 
 class _MainpageState extends State<Mainpage> {
+  List newsdata = [];
+  Future<List> datanews() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    final response = await http.get('https://snip-id.com/api/index', headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + sharedPreferences.getString('token')
+    });
+    Map<String, dynamic> _newsdata;
+    _newsdata = json.decode(response.body);
+    setState(() {
+      newsdata = _newsdata['data'];
+    });
+  }
+
+  var name;
+  var email;
+  var menu;
+  getUserData() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    name = sharedPreferences.getString("name");
+    email = sharedPreferences.getString("email");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    datanews();
+    getUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +78,10 @@ class _MainpageState extends State<Mainpage> {
             UserAccountsDrawerHeader(
               arrowColor: Colors.black,
               accountName: Text(
-                "Gusti Fajar",
+                name,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
               ),
-              accountEmail: Text("Thefajaris0853@gmail.com"),
+              accountEmail: Text(email),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/background_image_2.jpg'),
@@ -79,6 +112,8 @@ class _MainpageState extends State<Mainpage> {
                 SharedPreferences sharedPreferences =
                     await SharedPreferences.getInstance();
                 sharedPreferences.setString('token', '');
+                sharedPreferences.setString('email', '');
+                sharedPreferences.setString('name', '');
                 sharedPreferences.commit();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
@@ -112,65 +147,36 @@ class _MainpageState extends State<Mainpage> {
                 ),
                 Container(
                     height: 424,
-                    child: ListView(
-                      controller: PageController(
-                        viewportFraction: 0.8,
-                        initialPage: 0,
-                      ),
-                      physics: PageScrollPhysics(),
+                    child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        WhatsTrending(
-                          menu: "Achievements",
-                          gambar:
-                              "https://snip-id.com/laravel/storage/app/public/image/non-banner/IMG-20200827-WA0024.jpg",
-                          title:
-                              "GEMILANG! LULUSAN SMKN 1 BALIKPAPAN BERHASIL MENJADI KETUA GREEN GENERATION INDONESIA 2020",
-                          date: "Published 30, Aug 2020",
-                          detailtext:
-                              "Halo SNIPersss!. Ada kabar bagus nih dari kakak alumni SMKN 1 Balikpapan, ya kak Zidane yang merupakan Alumni SMKN 1 Balikpapan tahun 2020 menjadi Ketua Green Generation Indonesia looo, tapi pertama kita simak dulu Green Generation itu apa sih.Green Generation merupakan organisasi NGO yang bertujuan untuk mewujudkan generasi yang peduli dan berbudaya lingkungan, generasi yang dituju di organisasi ini adalah para pelajar SD sampai SMA/Sederajat.",
-                        ),
-                        WhatsTrending(
-                          menu: "Achievements",
-                          gambar:
-                              "https://snip-id.com/laravel/storage/app/public/image/non-banner/IMG-20200827-WA0024.jpg",
-                          title:
-                              "GEMILANG! LULUSAN SMKN 1 BALIKPAPAN BERHASIL MENJADI KETUA GREEN GENERATION INDONESIA 2020",
-                          date: "Published 30, Aug 2020",
-                          detailtext:
-                              "Halo SNIPersss!. Ada kabar bagus nih dari kakak alumni SMKN 1 Balikpapan, ya kak Zidane yang merupakan Alumni SMKN 1 Balikpapan tahun 2020 menjadi Ketua Green Generation Indonesia looo, tapi pertama kita simak dulu Green Generation itu apa sih.Green Generation merupakan organisasi NGO yang bertujuan untuk mewujudkan generasi yang peduli dan berbudaya lingkungan, generasi yang dituju di organisasi ini adalah para pelajar SD sampai SMA/Sederajat.",
-                        ),
-                        WhatsTrending(
-                          menu: "Achievements",
-                          gambar:
-                              "https://snip-id.com/laravel/storage/app/public/image/non-banner/IMG-20200827-WA0024.jpg",
-                          title:
-                              "GEMILANG! LULUSAN SMKN 1 BALIKPAPAN BERHASIL MENJADI KETUA GREEN GENERATION INDONESIA 2020",
-                          date: "Published 30, Aug 2020",
-                          detailtext:
-                              "Halo SNIPersss!. Ada kabar bagus nih dari kakak alumni SMKN 1 Balikpapan, ya kak Zidane yang merupakan Alumni SMKN 1 Balikpapan tahun 2020 menjadi Ketua Green Generation Indonesia looo, tapi pertama kita simak dulu Green Generation itu apa sih.Green Generation merupakan organisasi NGO yang bertujuan untuk mewujudkan generasi yang peduli dan berbudaya lingkungan, generasi yang dituju di organisasi ini adalah para pelajar SD sampai SMA/Sederajat.",
-                        ),
-                        WhatsTrending(
-                          menu: "Achievements",
-                          gambar:
-                              "https://snip-id.com/laravel/storage/app/public/image/non-banner/IMG-20200827-WA0024.jpg",
-                          title:
-                              "GEMILANG! LULUSAN SMKN 1 BALIKPAPAN BERHASIL MENJADI KETUA GREEN GENERATION INDONESIA 2020",
-                          date: "Published 30, Aug 2020",
-                          detailtext:
-                              "Halo SNIPersss!. Ada kabar bagus nih dari kakak alumni SMKN 1 Balikpapan, ya kak Zidane yang merupakan Alumni SMKN 1 Balikpapan tahun 2020 menjadi Ketua Green Generation Indonesia looo, tapi pertama kita simak dulu Green Generation itu apa sih.Green Generation merupakan organisasi NGO yang bertujuan untuk mewujudkan generasi yang peduli dan berbudaya lingkungan, generasi yang dituju di organisasi ini adalah para pelajar SD sampai SMA/Sederajat.",
-                        ),
-                        WhatsTrending(
-                          menu: "Achievements",
-                          gambar:
-                              "https://snip-id.com/laravel/storage/app/public/image/non-banner/IMG-20200827-WA0024.jpg",
-                          title:
-                              "GEMILANG! LULUSAN SMKN 1 BALIKPAPAN BERHASIL MENJADI KETUA GREEN GENERATION INDONESIA 2020",
-                          date: "Published 30, Aug 2020",
-                          detailtext:
-                              "Halo SNIPersss!. Ada kabar bagus nih dari kakak alumni SMKN 1 Balikpapan, ya kak Zidane yang merupakan Alumni SMKN 1 Balikpapan tahun 2020 menjadi Ketua Green Generation Indonesia looo, tapi pertama kita simak dulu Green Generation itu apa sih.Green Generation merupakan organisasi NGO yang bertujuan untuk mewujudkan generasi yang peduli dan berbudaya lingkungan, generasi yang dituju di organisasi ini adalah para pelajar SD sampai SMA/Sederajat.",
-                        ),
-                      ],
+                      shrinkWrap: true,
+                      itemCount: newsdata.toString() == '[]' ? 0 : 5,
+                      itemBuilder: (context, index) {
+                      String menu;
+                      if (newsdata[index]['category'] == 1) {
+                        menu = "MySchool";
+                      } else if (newsdata[index]['category'] == 2) {
+                        menu = "Events";
+                      } else if (newsdata[index]['category'] == 3) {
+                        menu = "Acievements";
+                      } else if (newsdata[index]['category'] == 4) {
+                        menu = "E-Commerce";
+                      } else if (newsdata[index]['category'] == 6) {
+                        menu = "Jobs&Campus";
+                      } else if (newsdata[index]['category'] == 5) {
+                        menu = "Others";
+                      }
+                        return WhatsTrending(
+                        title: newsdata[index]['title'],
+                        gambar:
+                            'https://snip-id.com/laravel/storage/app/public/image/non-banner/' +
+                                newsdata[index]['nonbanner'],
+                        menu: menu,
+                        detailtext: "oh nooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo i dont know what must i put in here",
+                        date: "Published " + newsdata[index]['created_at'],
+                        );
+                      },
                     )),
                 Container(
                   height: 20.0,
@@ -178,6 +184,7 @@ class _MainpageState extends State<Mainpage> {
                 Container(
                   height: 115.0,
                   child: ListView(
+                    physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
                       Menu(
@@ -213,35 +220,35 @@ class _MainpageState extends State<Mainpage> {
                     ],
                   ),
                 ),
-                News(
-                  judul:
-                      "TETAP SEHAT SELAMA DIRUMAH AJA DENGAN MENERAPKAN 5 TIPS BERIKUT",
-                  gambar:
-                      "https://snip-id.com/laravel/storage/app/public/image/non-banner/images (5).jpeg",
-                  menu: "Others",
-                  date: "Published 18, Aug 2020",
-                ),
-                News(
-                  judul: "UPACARA MEMPERINGATI HUT RI KE-75",
-                  gambar:
-                      "https://snip-id.com/laravel/storage/app/public/image/non-banner/line_229105690399309.jpg",
-                  menu: "Events",
-                  date: "Published 17, Aug 2020",
-                ),
-                News(
-                  judul: "PEMOTONGAN HEWAN QURBAN",
-                  gambar:
-                      "https://snip-id.com/laravel/storage/app/public/image/non-banner/SAVE_20200801_215108.jpg",
-                  menu: "Events",
-                  date: "Published 01, Aug 2020",
-                ),
-                News(
-                  judul: "Silahturahmi Pelepasan Purna Tugas",
-                  gambar:
-                      "https://snip-id.com/laravel/storage/app/public/image/non-banner/WhatsApp Image 2020-08-04 at 07.10.14 (2).jpeg",
-                  menu: "Events",
-                  date: "Published 05, Aug 2020",
-                ),
+                ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: newsdata.toString() == '[]' ? 0 : 20,
+                    itemBuilder: (context, index) {
+                      String menu;
+                      if (newsdata[index]['category'] == 1) {
+                        menu = "MySchool";
+                      } else if (newsdata[index]['category'] == 2) {
+                        menu = "Events";
+                      } else if (newsdata[index]['category'] == 3) {
+                        menu = "Acievements";
+                      } else if (newsdata[index]['category'] == 4) {
+                        menu = "E-Commerce";
+                      } else if (newsdata[index]['category'] == 6) {
+                        menu = "Jobs&Campus";
+                      } else if (newsdata[index]['category'] == 5) {
+                        menu = "Others";
+                      }
+                      return News(
+                        judul: newsdata[index]['title'],
+                        gambar:
+                            'https://snip-id.com/laravel/storage/app/public/image/non-banner/' +
+                                newsdata[index]['nonbanner'],
+                        menu: menu,
+                        detailtext: newsdata[index]['description'],
+                        date: "Published " + newsdata[index]['created_at'],
+                      );
+                    }),
               ],
             ),
           ],
